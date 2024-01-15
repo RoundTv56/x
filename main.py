@@ -480,22 +480,22 @@ class Bot(BaseBot):
 
   async def on_user_leave(self, user: User) -> None:
     try:
-      print(f"{user.username} left the room")
-      await self.stop_continuous_emote(user.id)
+        print(f"{user.username} left the room")
+        await self.stop_continuous_emote(user.id)
     except Exception as e:
-      print("Error 3:", e)
+        print("Error 3:", e)
 
 
-    async def on_chat(self, user: User, message: str) -> None:
-      try:
-        print(f"{user.username}: {message}")
+  async def on_chat(self, user: User, message: str) -> None:
+    try:
+      print(f"{user.username}: {message}")
 
-        if message in self.EMOTE_DICT:
-            emote_id = self.EMOTE_DICT[message]
-            await self.highrise.send_emote(emote_id, user.id)
+      if message in self.EMOTE_DICT:
+          emote_id = self.EMOTE_DICT[message]
+          await self.highrise.send_emote(emote_id, user.id)
 
-      except Exception as e:
-        print("Error:", e)
+    except Exception as e:
+      print("Error:", e)
 
     try:
       if message.startswith("Loop"):
@@ -529,7 +529,7 @@ class Bot(BaseBot):
 
 
     if message.lower().lstrip().startswith(
-        ("anime", "fight", "penguin", "flirt", "stars", "gravity", "uwu",
+      ("anime", "fight", "penguin", "flirt", "stars", "gravity", "uwu",
          "zero", "fashion", "icecream", "punk", "wrong", "sayso", "zombie",
          "cutey", "pose1", "pose3", "pose5", "pose7", "pose8", "dance",
          "shuffle", "viral", "weird", "russian", "curtsy", "snowball",
@@ -566,22 +566,17 @@ class Bot(BaseBot):
         return
 
       if message.lower().lstrip().startswith("fight"):
-        await self.highrise.chat(
-            f"\njajajaja \n@{user.username} y @{args[0][1:]}\nBoxeadores/Boxeadoras...🌚"
-        )
+        await self.highrise.chat(f"\nLmao \n@{user.username} And @{args[0][1:]}\nBoxers...🌚")
         await self.highrise.send_emote("emote-boxer", user.id)
         await self.highrise.send_emote("emote-boxer", user_id)
 
       elif message.lower().lstrip().startswith("penguin"):
-        await self.highrise.chat(
-            f"\n🫂 @{user.username} y @{args[0][1:]} ambos son pingüinos🐧❤️")
+        await self.highrise.chat(f"\n🫂 @{user.username} And @{args[0][1:]} Both are penguins🐧❤️")
         await self.highrise.send_emote("dance-pinguin", user.id)
         await self.highrise.send_emote("dance-pinguin", user_id)
 
       elif message.lower().lstrip().startswith("flirt"):
-        await self.highrise.chat(
-            f"\n Hola @{user.username} y @{args[0][1:]} ambos son pingüinos... 😏❤️"
-        )
+        await self.highrise.chat(f"\n Hey @{user.username} And @{args[0][1:]} Flirting hmmm... 😏❤️")
         await self.highrise.send_emote("emote-lust", user.id)
         await self.highrise.send_emote("emote-lust", user_id)
 
@@ -787,8 +782,8 @@ class Bot(BaseBot):
 
       elif message.lower().lstrip().startswith("kiss"):
         await self.highrise.send_emote("emote-kiss", user.id)
-        await self.highrise.send_emote("eote-kiss", user_id)
-
+        await self.highrise.send_emote("emote-kiss", user_id)
+        
   #TO_BUY ROOM boost
 
     if message.lower().startswith(
