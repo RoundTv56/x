@@ -481,43 +481,53 @@ class Bot(BaseBot):
     # await self.highrise.chat(f"\n{receiver.username} {text_to_emoji[reaction]} ")
 
   async def on_user_leave(self, user: User) -> None:
-    print(f"{user.username} Left the Room")
-    await self.stop_continuous_emote(user.id)
+    try:
+      print(f"{user.username} left the room")
+      await self.stop_continuous_emote(user.id)
+    except Exception as e:
+      print("Error 3:", e)
 
-  async def on_chat(self, user: User, message: str) -> None:
-    print(f"{user.username}:{message}")
 
-      
-    if message in self.EMOTE_DICT:
-      emote_id = self.EMOTE_DICT[message]
-      await self.highrise.send_emote(emote_id, user.id)
+    async def on_chat(self, user: User, message: str) -> None:
+    try:
+      print(f"{user.username}: {message}")
 
-    if message.startswith("Loop"):
-      emote_name = message[5:].strip()
-      if emote_name in self.EMOTE_DICT:
-        emote_id = self.EMOTE_DICT[emote_name]
-        delay = 1
-        if " " in emote_name:
-          emote_name, delay_str = emote_name.split(" ")
-          if delay_str.isdigit():
-            delay = float(delay_str)
+      if message in self.EMOTE_DICT:
+          emote_id = self.EMOTE_DICT[message]
+          await self.highrise.send_emote(emote_id, user.id)
 
-        if user.id in self.continuous_emote_tasks and not self.continuous_emote_tasks[
-            user.id].cancelled():
-          await self.stop_continuous_emote(user.id)
+    except Exception as e:
+      print("Error:", e)
 
-        task = asyncio.create_task(
-            self.send_continuous_emote(emote_id, user.id, delay))
-        self.continuous_emote_tasks[user.id] = task
+    try:
+      if message.startswith("Loop"):
+          emote_name = message[5:].strip()
+          if emote_name in self.EMOTE_DICT:
+              emote_id = self.EMOTE_DICT[emote_name]
+              delay = 1
+              if " " in emote_name:
+                  emote_name, delay_str = emote_name.split(" ")
+                  if delay_str.isdigit():
+                      delay = float(delay_str)
 
-    elif message.startswith("Stop"):
-      if user.id in self.continuous_emote_tasks and not self.continuous_emote_tasks[
-          user.id].cancelled():
-        await self.stop_continuous_emote(user.id)
+              if user.id in self.continuous_emote_tasks and not self.continuous_emote_tasks[
+                      user.id].cancelled():
+                  await self.stop_continuous_emote(user.id)
 
-        await self.highrise.chat("Continuous emote has been stopped.")
-      else:
-        await self.highrise.chat("You don't have an active loop_emote.")
+              task = asyncio.create_task(
+                  self.send_continuous_emote(emote_id, user.id, delay))
+              self.continuous_emote_tasks[user.id] = task
+
+      elif message.startswith("Stop"):
+          if user.id in self.continuous_emote_tasks and not self.continuous_emote_tasks[
+                  user.id].cancelled():
+              await self.stop_continuous_emote(user.id)
+              await self.highrise.send_whisper(user.id, f"Continuous emote has been stopped.")
+          else:
+              await self.highrise.send_whisper(user.id, f"You don't have an active loop_emote.")
+
+    except Exception as e:
+      print("Error in handling Loop and Stop commands:", e)
 
     elif message.lower().startswith("Bank"):
       wallet = (await self.highrise.get_wallet()).content
