@@ -397,8 +397,6 @@ class Bot(BaseBot):
       else:
         await self.highrise.send_message(conversation_id, "Hola?")
 
-  async def on_user_move(self, user: User, pos: Position) -> None:
-    print(f"{user.username} moved to {pos}")
 
   async def on_user_join(self, user: User,
                          position: Union[Position, AnchorPosition]) -> None:
@@ -406,7 +404,7 @@ class Bot(BaseBot):
       user.id, f"\nBienvenido {user.username}\n❤️Escribe ( Join ) en pm‼️ \ntenga la oportunidad de ganar ORO 1K\nNOTA: ¡No envíe mensajes en la sala ni envíe mensajes solo en PM para Join! ❤️") 
     #print(f"{user.username} joined the room standing at {position}")
     await self.highrise.send_emote("emote-lust", user.id)
-    await self.send_random_reactions(user.id, num_reactions=1, delay=1.55)
+    # await self.send_random_reactions(user.id, num_reactions=1, delay=1.55)
 
     # tip new users 1g when they join the room
     # await self.tip_new_user(user, 1)
