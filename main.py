@@ -487,15 +487,15 @@ class Bot(BaseBot):
 
 
     async def on_chat(self, user: User, message: str) -> None:
-    try:
-      print(f"{user.username}: {message}")
+      try:
+        print(f"{user.username}: {message}")
 
-      if message in self.EMOTE_DICT:
-          emote_id = self.EMOTE_DICT[message]
-          await self.highrise.send_emote(emote_id, user.id)
+        if message in self.EMOTE_DICT:
+            emote_id = self.EMOTE_DICT[message]
+            await self.highrise.send_emote(emote_id, user.id)
 
-    except Exception as e:
-      print("Error:", e)
+      except Exception as e:
+        print("Error:", e)
 
     try:
       if message.startswith("Loop"):
@@ -527,14 +527,6 @@ class Bot(BaseBot):
     except Exception as e:
       print("Error in handling Loop and Stop commands:", e)
 
-    elif message.lower().startswith("Bank"):
-      wallet = (await self.highrise.get_wallet()).content
-      await self.highrise.chat(
-          f"The bot wallet contains {wallet[0].amount} {wallet[0].type}")
-    elif message.lower().startswith("Users"):
-      room_users = (await self.highrise.get_room_users()).content
-      await self.highrise.chat(f"There are {len(room_users)} users in the room"
-                               )
 
     if message.lower().lstrip().startswith(
         ("anime", "fight", "penguin", "flirt", "stars", "gravity", "uwu",
