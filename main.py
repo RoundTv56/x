@@ -338,18 +338,20 @@ class Bot(BaseBot):
   async def on_start(self, session_metadata: SessionMetadata) -> None:
     print("BOT IN THE ROOM")
     # Create tasks for all three loops
-    rizz_loop_task = self.highrise.tg.create_task(self.note_loop())
+    rizz_loop_task = self.highrise.tg.create_task(self.rizz_loop())
+    note_loop_task = self.highrise.tg.create_task(self.note_loop())
     emote_loop_task = self.highrise.tg.create_task(self.emote_loop())
 
     # Teleport and start all three loops concurrently
     await asyncio.gather(
         self.highrise.teleport(session_metadata.user_id, Position(16.25, 8.55, 4.5, "FrontLeft")),
         rizz_loop_task,
+        note_loop_task,
         emote_loop_task
     )
 
     # If needed, you can wait for the completion of the tasks
-    await asyncio.gather(rizz_loop_task, emote_loop_task)
+    await asyncio.gather(rizz_loop_task, note_loop_task, emote_loop_task)
 
   async def on_message(self, user_id: str, conversation_id: str,
                        is_new_conversation: bool) -> None:
@@ -400,17 +402,14 @@ class Bot(BaseBot):
 
   async def on_user_join(self, user: User,
                          position: Union[Position, AnchorPosition]) -> None:
-    await self.highrise.chat(f"\nCommandos📢\nLíneas poéticas | Piropos | broma | Hecho de la diversión | Asar | porcentaje de amor | porcentaje de odio | año de muerte | año de boda | rico/rica | iq  ❤️")
     await self.highrise.send_whisper(
       user.id, f"\nBienvenido {user.username}\n❤️Escribe ( Join ) en pm‼️ \ntenga la oportunidad de ganar ORO 1K\nNOTA: ¡No envíe mensajes en la sala ni envíe mensajes solo en PM para Join! ❤️") 
-    await self.highrise.send_whisper(
-        user.id, f"\nVerifique la biografía para ver los comandos‼️\nPrueba nuevo‼️\nLíneas poéticas\nPiropos\nBroma\nAsar\nHecho de la diversión")
     #print(f"{user.username} joined the room standing at {position}")
     await self.highrise.send_emote("emote-lust", user.id)
     await self.send_random_reactions(user.id, num_reactions=1, delay=1.55)
 
     # tip new users 1g when they join the room
-    await self.tip_new_user(user, 1)
+    # await self.tip_new_user(user, 1)
 
   async def on_tip(self, sender: User, receiver: User,
                    tip: CurrencyItem | Item) -> None:
@@ -472,14 +471,14 @@ class Bot(BaseBot):
         await self.highrise.react("clap", user.id)
       if reaction == "thumbs":
         await self.highrise.react("thumbs", user.id)
-    text_to_emoji = {
-        "wink": "¿Un poco travieso, eh? 😉",
-        "wave": "¡Claro, me encantaría! 👋🍸😉",
-        "thumbs": "¡Gracias, guapo! 👍😉",
-        "heart": "Tu amor me hace sonreír y mi corazón latir más fuerte. ❤️😉",
-        "clap": "¡Aplausos para ti, mi cariño! 👏😘",
-    }
-    await self.highrise.chat(f"\n{receiver.username} {text_to_emoji[reaction]} ")
+    # text_to_emoji = {
+    #     "wink": "¿Un poco travieso, eh? 😉",
+    #     "wave": "¡Claro, me encantaría! 👋🍸😉",
+    #     "thumbs": "¡Gracias, guapo! 👍😉",
+    #     "heart": "Tu amor me hace sonreír y mi corazón latir más fuerte. ❤️😉",
+    #     "clap": "¡Aplausos para ti, mi cariño! 👏😘",
+    # }
+    # await self.highrise.chat(f"\n{receiver.username} {text_to_emoji[reaction]} ")
 
   async def on_user_leave(self, user: User) -> None:
     print(f"{user.username} Left the Room")
@@ -1839,6 +1838,16 @@ class Bot(BaseBot):
                 # ... (add your emote choices here)
             ]))
         await asyncio.sleep(4)
+
+  async def rizz_loop(self):
+    with open('no.json', 'r') as f:
+      rizz = json.load(f)
+
+    while True:
+      data = random.choice(rizz)
+      quote = data["quote"] + " " + data["emoji"]
+      await self.highrise.chat(quote)
+      await asyncio.sleep(40)
       
   async def note_loop(self):
     try:
